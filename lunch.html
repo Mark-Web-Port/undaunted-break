@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Undaunted | On Lunch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #101411;
+  --lime: #d5ff35;
+  --white: #f4f5ef;
+  --muted: #a1a99e;
+  --red: #ff3838;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--white);
+  background: var(--bg);
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(22px, 4vw, 60px);
+  background:
+    radial-gradient(ellipse at 78% 50%, #293527 0%, transparent 45%),
+    #101411;
+}
+
+.grid {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  opacity: .24;
+  background-image:
+    linear-gradient(#ffffff0b 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff0b 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.glow {
+  position: absolute;
+  z-index: -1;
+  width: 45vw;
+  height: 45vw;
+  right: 5%;
+  top: 10%;
+  border-radius: 50%;
+  background: #d5ff3510;
+  filter: blur(55px);
+  animation: glow 7s ease-in-out infinite alternate;
+}
+
+header, footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  z-index: 3;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo {
+  height: 24px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.brand-text {
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  color: var(--white);
+  display: none;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font: 10px 'DM Mono', monospace;
+  letter-spacing: .08em;
+  color: #c5cec2;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 13px #d5ff3580;
+  animation: pulse 2s infinite;
+}
+
+.dot.overtime-dot {
+  background: var(--red);
+  box-shadow: 0 0 14px rgba(255, 56, 56, 0.85);
+  animation: pulse-danger 1s infinite alternate;
+}
+
+/* --- ENLARGED COUNTDOWN & OVERTIME DISPLAY --- */
+.timer-container {
+  margin-top: clamp(24px, 3.5vw, 42px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(18px, 2.5vw, 28px) clamp(24px, 3vw, 36px);
+  background: rgba(16, 20, 17, 0.78);
+  border: 1px solid rgba(213, 255, 53, 0.3);
+  border-radius: 14px;
+  width: fit-content;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(213, 255, 53, 0.04);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.timer-label {
+  font: 700 clamp(11px, 1.1vw, 14px) 'DM Mono', monospace;
+  letter-spacing: .25em;
+  color: var(--lime);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+
+.timer-value {
+  font: 800 clamp(48px, 6.2vw, 92px) 'DM Mono', monospace;
+  color: var(--lime);
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  text-shadow: 0 0 24px rgba(213, 255, 53, 0.3);
+}
+
+/* Overtime State Modifier */
+.timer-container.overtime-active {
+  border-color: rgba(255, 56, 56, 0.7);
+  background: rgba(35, 10, 10, 0.55);
+  box-shadow: 0 12px 40px rgba(255, 56, 56, 0.3), inset 0 0 25px rgba(255, 56, 56, 0.08);
+}
+
+.timer-container.overtime-active .timer-label {
+  color: var(--red);
+}
+
+.timer-container.overtime-active .timer-value {
+  color: var(--red);
+  text-shadow: 0 0 28px rgba(255, 56, 56, 0.65);
+  animation: blink 1.2s infinite ease-in-out;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  flex: 1;
+  gap: 3vw;
+  padding: 30px 0;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  animation: enter 1s both;
+}
+
+.eyebrow {
+  margin: 0 0 20px;
+  color: var(--lime);
+  font: 11px 'DM Mono', monospace;
+  letter-spacing: .2em;
+}
+
+h1 {
+  margin: 0;
+  font: 900 clamp(80px, 13vw, 210px)/.75 'Barlow Condensed', Impact, sans-serif;
+  letter-spacing: -.055em;
+  animation: breathe 5s ease-in-out infinite;
+}
+
+h1 span {
+  display: block;
+  white-space: nowrap;
+}
+
+h1 .lime {
+  margin-top: .13em;
+  color: var(--lime);
+}
+
+.message {
+  margin-top: clamp(20px, 2.5vw, 32px);
+  padding-left: 17px;
+  border-left: 3px solid var(--lime);
+  color: var(--muted);
+  font-size: clamp(12px, 1.2vw, 15px);
+  line-height: 1.8;
+  letter-spacing: .12em;
+}
+
+.message strong { color: var(--white); }
+
+/* --- HUD CAROUSEL CONTAINER --- */
+.carousel-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 820px;
+  padding: 14px;
+  background: rgba(16, 20, 17, 0.5);
+  border: 1px solid rgba(213, 255, 53, 0.15);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(213, 255, 53, 0.03);
+  animation: enter 1.2s .2s both;
+}
+
+.carousel-wrapper::before,
+.carousel-wrapper::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--lime);
+  pointer-events: none;
+  z-index: 5;
+}
+.carousel-wrapper::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 16px;
+  box-shadow: -3px -3px 12px rgba(213, 255, 53, 0.4);
+}
+.carousel-wrapper::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 16px;
+  box-shadow: 3px 3px 12px rgba(213, 255, 53, 0.4);
+}
+
+.hud-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px 12px;
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .15em;
+  color: var(--muted);
+  border-bottom: 1px dashed rgba(213, 255, 53, 0.15);
+  margin-bottom: 12px;
+}
+
+.hud-title {
+  color: var(--lime);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: continuousSlide 32s linear infinite;
+  will-change: transform;
+}
+
+.carousel-wrapper:hover .carousel-track {
+  animation-play-state: paused;
+}
+
+.carousel-card {
+  flex: 0 0 auto;
+  width: 240px;
+  height: 340px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(213, 255, 53, 0.2);
+  background: #151b15;
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.carousel-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: var(--lime);
+  box-shadow: 0 12px 28px rgba(213, 255, 53, 0.25), 0 0 15px rgba(213, 255, 53, 0.15);
+}
+
+.carousel-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.1) contrast(1.05);
+  transition: transform 0.5s ease;
+}
+
+.carousel-card:hover img {
+  transform: scale(1.08);
+}
+
+.card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  padding: 4px 8px;
+  background: rgba(16, 20, 17, 0.85);
+  border: 1px solid rgba(213, 255, 53, 0.4);
+  border-radius: 4px;
+  font: 8px 'DM Mono', monospace;
+  color: var(--lime);
+  letter-spacing: .1em;
+  backdrop-filter: blur(4px);
+}
+
+.card-scanline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.25) 51%);
+  background-size: 100% 4px;
+  opacity: 0.4;
+  z-index: 2;
+}
+
+.toolbar {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
+#fullscreen {
+  background: rgba(16, 20, 17, 0.85);
+  border: 1px solid rgba(213, 255, 53, 0.35);
+  color: var(--lime);
+  font: 11px 'DM Mono', monospace;
+  letter-spacing: .1em;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+#fullscreen:hover {
+  background: var(--lime);
+  color: var(--bg);
+}
+
+@keyframes continuousSlide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulse-danger {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .carousel-wrapper {
+    max-width: 100%;
+  }
+  .carousel-card {
+    width: 180px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 750px) {
+  .screen { padding: 24px 20px; }
+  h1 { font-size: clamp(90px, 18vw, 150px); }
+  .eyebrow { margin-bottom: 20px; }
+  .message { margin-top: 20px; }
+  footer { font-size: 8px; }
+}
+
+@media (max-width: 400px) {
+  .brand-logo { height: 18px; }
+  .status { font-size: 8px; }
+  h1 { font-size: 22vw; }
+}
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="grid"></div>
+  <div class="glow"></div>
+
+  <header>
+    <div class="brand">
+      <img src="Undaunted-Logo.PNG" alt="Undaunted" class="brand-logo" onerror="this.style.display='none'; document.getElementById('brandText').style.display='block';">
+      <span class="brand-text" id="brandText">UNDAUNTED</span>
+    </div>
+    <div class="status" id="statusHeader"><span class="dot" id="statusDot"></span> LUNCH MODE ENABLED</div>
+  </header>
+
+  <main>
+    <section class="copy">
+      <p class="eyebrow">/// REFUELLING IN PROGRESS</p>
+      <h1><span>ON</span><span class="lime">LUNCH<span style="display:inline;color:white">.</span></span></h1>
+      
+      <!-- 1-Hour Countdown / Overtime HUD Module -->
+      <div class="timer-container" id="timerBox">
+        <div class="timer-label" id="timerLabel">LUNCH REMAINING</div>
+        <div class="timer-value" id="timerDisplay">01:00:00</div>
+      </div>
+
+      <div class="message">
+        <strong>HUMANS ON LUNCH.</strong><br>
+        ROBOTS ON DUTY.
+      </div>
+    </section>
+
+    <!-- HUD MARQUEE CAROUSEL -->
+    <div class="carousel-wrapper">
+      <div class="hud-header">
+        <span class="hud-title"><span class="dot" style="width:5px;height:5px"></span> LIVE OPERATOR FEED</span>
+        <span>SYS_LOG // 13 RECORDS</span>
+      </div>
+
+      <section class="carousel-container">
+        <div class="carousel-track">
+          <!-- First set -->
+          <div class="carousel-card"><span class="card-badge">CAM // 01</span><div class="card-scanline"></div><img src="Images/1.jpeg" alt="Operator 1"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 02</span><div class="card-scanline"></div><img src="Images/2.jpeg" alt="Operator 2"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 03</span><div class="card-scanline"></div><img src="Images/3.jpeg" alt="Operator 3"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 04</span><div class="card-scanline"></div><img src="Images/4.jpeg" alt="Operator 4"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 05</span><div class="card-scanline"></div><img src="Images/5.jpeg" alt="Operator 5"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 06</span><div class="card-scanline"></div><img src="Images/6.jpeg" alt="Operator 6"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 07</span><div class="card-scanline"></div><img src="Images/7.jpeg" alt="Operator 7"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 08</span><div class="card-scanline"></div><img src="Images/8.jpeg" alt="Operator 8"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 09</span><div class="card-scanline"></div><img src="Images/9.jpeg" alt="Operator 9"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 10</span><div class="card-scanline"></div><img src="Images/10.jpeg" alt="Operator 10"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 11</span><div class="card-scanline"></div><img src="Images/11.jpeg" alt="Operator 11"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 12</span><div class="card-scanline"></div><img src="Images/12.jpeg" alt="Operator 12"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 13</span><div class="card-scanline"></div><img src="Images/13.jpeg" alt="Operator 13"></div>
+
+          <!-- Duplicate set for continuous loop -->
+          <div class="carousel-card"><span class="card-badge">CAM // 01</span><div class="card-scanline"></div><img src="Images/1.jpeg" alt="Operator 1"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 02</span><div class="card-scanline"></div><img src="Images/2.jpeg" alt="Operator 2"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 03</span><div class="card-scanline"></div><img src="Images/3.jpeg" alt="Operator 3"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 04</span><div class="card-scanline"></div><img src="Images/4.jpeg" alt="Operator 4"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 05</span><div class="card-scanline"></div><img src="Images/5.jpeg" alt="Operator 5"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 06</span><div class="card-scanline"></div><img src="Images/6.jpeg" alt="Operator 6"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 07</span><div class="card-scanline"></div><img src="Images/7.jpeg" alt="Operator 7"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 08</span><div class="card-scanline"></div><img src="Images/8.jpeg" alt="Operator 8"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 09</span><div class="card-scanline"></div><img src="Images/9.jpeg" alt="Operator 9"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 10</span><div class="card-scanline"></div><img src="Images/10.jpeg" alt="Operator 10"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 11</span><div class="card-scanline"></div><img src="Images/11.jpeg" alt="Operator 11"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 12</span><div class="card-scanline"></div><img src="Images/12.jpeg" alt="Operator 12"></div>
+          <div class="carousel-card"><span class="card-badge">CAM // 13</span><div class="card-scanline"></div><img src="Images/13.jpeg" alt="Operator 13"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <span class="active">● SYSTEM READY</span>
+    <span id="footerStatus">OPERATOR ON LUNCH</span>
+    <span>UNDAUNTED / 01</span>
+  </footer>
+</div>
+
+<div class="toolbar">
+  <button id="fullscreen">⛶ Full Screen</button>
+</div>
+
+<script>
+document.getElementById('fullscreen').addEventListener('click', async function () {
+  try {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+      document.body.classList.add('fullscreen');
+    } else {
+      await document.exitFullscreen();
+    }
+  } catch (error) {
+    console.warn('Fullscreen request rejected or not supported.');
+  }
+});
+
+document.addEventListener('fullscreenchange', function () {
+  document.body.classList.toggle('fullscreen', !!document.fullscreenElement);
+});
+
+// 1 Hour = 3600 seconds
+const LUNCH_DURATION_SECONDS = 60 * 60;
+const startTime = Date.now();
+
+const timerBox = document.getElementById('timerBox');
+const timerLabel = document.getElementById('timerLabel');
+const timerDisplay = document.getElementById('timerDisplay');
+const statusDot = document.getElementById('statusDot');
+const statusHeader = document.getElementById('statusHeader');
+const footerStatus = document.getElementById('footerStatus');
+
+function formatTime(totalSeconds) {
+  const hrs = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+  return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const remaining = LUNCH_DURATION_SECONDS - elapsed;
+
+  if (remaining >= 0) {
+    timerDisplay.textContent = formatTime(remaining);
+  } else {
+    const overtime = Math.abs(remaining);
+    timerDisplay.textContent = `+${formatTime(overtime)}`;
+    
+    if (!timerBox.classList.contains('overtime-active')) {
+      timerBox.classList.add('overtime-active');
+      timerLabel.textContent = '⚠ OVERTIME ELAPSED';
+      statusDot.classList.add('overtime-dot');
+      statusHeader.innerHTML = '<span class="dot overtime-dot" id="statusDot"></span> OVERTIME ALERT';
+      footerStatus.textContent = 'LUNCH OVERTIME IN PROGRESS';
+      footerStatus.style.color = 'var(--red)';
+    }
+  }
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);
+</script>
+</body>
+</html>
