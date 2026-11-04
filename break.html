@@ -119,7 +119,6 @@ header, footer {
   animation: pulse-danger 1s infinite alternate;
 }
 
-/* --- ENLARGED COUNTDOWN & OVERTIME DISPLAY --- */
 .timer-container {
   margin-top: clamp(24px, 3.5vw, 42px);
   display: flex;
@@ -154,7 +153,6 @@ header, footer {
   text-shadow: 0 0 24px rgba(213, 255, 53, 0.3);
 }
 
-/* Overtime State Modifier */
 .timer-container.overtime-active {
   border-color: rgba(255, 56, 56, 0.7);
   background: rgba(35, 10, 10, 0.55);
@@ -222,7 +220,6 @@ h1 .lime {
 
 .message strong { color: var(--white); }
 
-/* --- HUD CAROUSEL CONTAINER --- */
 .carousel-wrapper {
   position: relative;
   z-index: 2;
@@ -288,6 +285,9 @@ h1 .lime {
   width: 100%;
   overflow: hidden;
   border-radius: 8px;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
@@ -296,7 +296,7 @@ h1 .lime {
   display: flex;
   gap: 20px;
   width: max-content;
-  animation: continuousSlide 32s linear infinite;
+  animation: continuousSlide 40s linear infinite;
   will-change: transform;
 }
 
@@ -365,9 +365,11 @@ h1 .lime {
   bottom: 16px;
   right: 16px;
   z-index: 10;
+  display: flex;
+  gap: 10px;
 }
 
-#fullscreen {
+.btn-hud {
   background: rgba(16, 20, 17, 0.85);
   border: 1px solid rgba(213, 255, 53, 0.35);
   color: var(--lime);
@@ -380,7 +382,7 @@ h1 .lime {
   transition: all 0.2s ease;
 }
 
-#fullscreen:hover {
+.btn-hud:hover {
   background: var(--lime);
   color: var(--bg);
 }
@@ -401,17 +403,9 @@ h1 .lime {
 }
 
 @media (max-width: 900px) {
-  main {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-  .carousel-wrapper {
-    max-width: 100%;
-  }
-  .carousel-card {
-    width: 180px;
-    height: 250px;
-  }
+  main { grid-template-columns: 1fr; gap: 30px; }
+  .carousel-wrapper { max-width: 100%; }
+  .carousel-card { width: 180px; height: 250px; }
 }
 
 @media (max-width: 750px) {
@@ -447,7 +441,6 @@ h1 .lime {
       <p class="eyebrow">/// TEMPORARILY RECHARGING</p>
       <h1><span>ON</span><span class="lime">BREAK<span style="display:inline;color:white">.</span></span></h1>
       
-      <!-- Prominently Enlarged Countdown / Overtime HUD Module -->
       <div class="timer-container" id="timerBox">
         <div class="timer-label" id="timerLabel">BREAK REMAINING</div>
         <div class="timer-value" id="timerDisplay">15:00</div>
@@ -463,41 +456,11 @@ h1 .lime {
     <div class="carousel-wrapper">
       <div class="hud-header">
         <span class="hud-title"><span class="dot" style="width:5px;height:5px"></span> LIVE OPERATOR FEED</span>
-        <span>SYS_LOG // 13 RECORDS</span>
+        <span id="recordCount">SYS_LOG // SCANNING IMAGES...</span>
       </div>
 
       <section class="carousel-container">
-        <div class="carousel-track">
-          <!-- First set -->
-          <div class="carousel-card"><span class="card-badge">CAM // 01</span><div class="card-scanline"></div><img src="Images/1.jpeg" alt="Operator 1"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 02</span><div class="card-scanline"></div><img src="Images/2.jpeg" alt="Operator 2"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 03</span><div class="card-scanline"></div><img src="Images/3.jpeg" alt="Operator 3"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 04</span><div class="card-scanline"></div><img src="Images/4.jpeg" alt="Operator 4"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 05</span><div class="card-scanline"></div><img src="Images/5.jpeg" alt="Operator 5"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 06</span><div class="card-scanline"></div><img src="Images/6.jpeg" alt="Operator 6"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 07</span><div class="card-scanline"></div><img src="Images/7.jpeg" alt="Operator 7"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 08</span><div class="card-scanline"></div><img src="Images/8.jpeg" alt="Operator 8"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 09</span><div class="card-scanline"></div><img src="Images/9.jpeg" alt="Operator 9"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 10</span><div class="card-scanline"></div><img src="Images/10.jpeg" alt="Operator 10"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 11</span><div class="card-scanline"></div><img src="Images/11.jpeg" alt="Operator 11"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 12</span><div class="card-scanline"></div><img src="Images/12.jpeg" alt="Operator 12"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 13</span><div class="card-scanline"></div><img src="Images/13.jpeg" alt="Operator 13"></div>
-
-          <!-- Duplicate set for continuous loop -->
-          <div class="carousel-card"><span class="card-badge">CAM // 01</span><div class="card-scanline"></div><img src="Images/1.jpeg" alt="Operator 1"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 02</span><div class="card-scanline"></div><img src="Images/2.jpeg" alt="Operator 2"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 03</span><div class="card-scanline"></div><img src="Images/3.jpeg" alt="Operator 3"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 04</span><div class="card-scanline"></div><img src="Images/4.jpeg" alt="Operator 4"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 05</span><div class="card-scanline"></div><img src="Images/5.jpeg" alt="Operator 5"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 06</span><div class="card-scanline"></div><img src="Images/6.jpeg" alt="Operator 6"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 07</span><div class="card-scanline"></div><img src="Images/7.jpeg" alt="Operator 7"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 08</span><div class="card-scanline"></div><img src="Images/8.jpeg" alt="Operator 8"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 09</span><div class="card-scanline"></div><img src="Images/9.jpeg" alt="Operator 9"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 10</span><div class="card-scanline"></div><img src="Images/10.jpeg" alt="Operator 10"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 11</span><div class="card-scanline"></div><img src="Images/11.jpeg" alt="Operator 11"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 12</span><div class="card-scanline"></div><img src="Images/12.jpeg" alt="Operator 12"></div>
-          <div class="carousel-card"><span class="card-badge">CAM // 13</span><div class="card-scanline"></div><img src="Images/13.jpeg" alt="Operator 13"></div>
-        </div>
+        <div class="carousel-track" id="carouselTrack"></div>
       </section>
     </div>
   </main>
@@ -510,10 +473,11 @@ h1 .lime {
 </div>
 
 <div class="toolbar">
-  <button id="fullscreen">⛶ Full Screen</button>
+  <button id="fullscreen" class="btn-hud">⛶ Full Screen</button>
 </div>
 
 <script>
+// --- Fullscreen ---
 document.getElementById('fullscreen').addEventListener('click', async function () {
   try {
     if (!document.fullscreenElement) {
@@ -531,6 +495,7 @@ document.addEventListener('fullscreenchange', function () {
   document.body.classList.toggle('fullscreen', !!document.fullscreenElement);
 });
 
+// --- Break Timer ---
 const BREAK_DURATION_SECONDS = 15 * 60;
 const startTime = Date.now();
 
@@ -567,9 +532,75 @@ function updateTimer() {
     }
   }
 }
-
 updateTimer();
 setInterval(updateTimer, 1000);
+
+// --- PERMANENT FOLDER SCANNER (1 to 100, supports .jpg, .jpeg, .png, .webp) ---
+const MAX_SEARCH_COUNT = 100;
+const EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp'];
+
+function checkImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(src);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+async function loadPermanentFolderImages() {
+  const recordCountEl = document.getElementById('recordCount');
+  const track = document.getElementById('carouselTrack');
+  const validImages = [];
+
+  const checkSlot = async (num) => {
+    for (const ext of EXTENSIONS) {
+      const path = `Images/${num}.${ext}`;
+      const found = await checkImage(path);
+      if (found) {
+        return { num, path: found };
+      }
+    }
+    return null;
+  };
+
+  const tasks = [];
+  for (let i = 1; i <= MAX_SEARCH_COUNT; i++) {
+    tasks.push(checkSlot(i));
+  }
+
+  const results = await Promise.all(tasks);
+  results.filter(Boolean).sort((a, b) => a.num - b.num).forEach(item => validImages.push(item.path));
+
+  if (validImages.length === 0) {
+    recordCountEl.textContent = 'SYS_LOG // 0 RECORDS (EMPTY FOLDER)';
+    return;
+  }
+
+  recordCountEl.textContent = `SYS_LOG // ${validImages.length} RECORDS`;
+
+  function createCard(src, index) {
+    const badgeNumber = String(index + 1).padStart(2, '0');
+    const card = document.createElement('div');
+    card.className = 'carousel-card';
+    card.innerHTML = `
+      <span class="card-badge">CAM // ${badgeNumber}</span>
+      <div class="card-scanline"></div>
+      <img src="${src}" alt="CAM ${badgeNumber}">
+    `;
+    return card;
+  }
+
+  // Set 1
+  validImages.forEach((src, idx) => track.appendChild(createCard(src, idx)));
+  // Set 2 (for continuous smooth marquee)
+  validImages.forEach((src, idx) => track.appendChild(createCard(src, idx)));
+
+  const totalCards = validImages.length * 2;
+  track.style.animationDuration = `${Math.max(25, totalCards * 1.5)}s`;
+}
+
+loadPermanentFolderImages();
 </script>
 </body>
 </html>
