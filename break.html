@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Undaunted | On Break</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500;700&display=swap');
@@ -15,14 +15,19 @@
   --red: #ff3838;
 }
 
-* { box-sizing: border-box; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
-body {
+html, body {
   margin: 0;
+  padding: 0;
   color: var(--white);
   background: var(--bg);
   font-family: Arial, sans-serif;
   overflow-x: hidden;
+  width: 100%;
+  min-height: 100%;
 }
 
 .screen {
@@ -30,13 +35,14 @@ body {
   min-height: 100dvh;
   position: relative;
   isolation: isolate;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: clamp(22px, 4vw, 60px);
+  padding: clamp(14px, 3.5vw, 48px);
+  width: 100%;
+  max-width: 100vw;
   background:
-    radial-gradient(ellipse at 78% 50%, #293527 0%, transparent 45%),
+    radial-gradient(ellipse at 78% 50%, #293527 0%, transparent 55%),
     #101411;
 }
 
@@ -48,16 +54,18 @@ body {
   background-image:
     linear-gradient(#ffffff0b 1px, transparent 1px),
     linear-gradient(90deg, #ffffff0b 1px, transparent 1px);
-  background-size: 44px 44px;
+  background-size: 32px 32px;
 }
 
 .glow {
   position: absolute;
   z-index: -1;
-  width: 45vw;
-  height: 45vw;
-  right: 5%;
-  top: 10%;
+  width: 65vw;
+  height: 65vw;
+  max-width: 450px;
+  max-height: 450px;
+  right: -10%;
+  top: 5%;
   border-radius: 50%;
   background: #d5ff3510;
   filter: blur(55px);
@@ -68,18 +76,21 @@ header, footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   position: relative;
   z-index: 3;
+  width: 100%;
+  min-width: 0;
 }
 
 .brand {
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .brand-logo {
-  height: 24px;
+  height: clamp(18px, 4vw, 26px);
   width: auto;
   display: block;
   object-fit: contain;
@@ -87,7 +98,7 @@ header, footer {
 
 .brand-text {
   font-family: 'Barlow Condensed', Impact, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: .08em;
   color: var(--white);
@@ -97,10 +108,12 @@ header, footer {
 .status {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   font: 10px 'DM Mono', monospace;
   letter-spacing: .08em;
   color: #c5cec2;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .dot {
@@ -119,25 +132,70 @@ header, footer {
   animation: pulse-danger 1s infinite alternate;
 }
 
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  flex: 1;
+  gap: clamp(16px, 3.5vw, 40px);
+  padding: 20px 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  width: 100%;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--lime);
+  font: 10px 'DM Mono', monospace;
+  letter-spacing: .2em;
+}
+
+h1 {
+  margin: 0;
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-weight: 900;
+  font-size: clamp(48px, 10vw, 150px);
+  line-height: 0.85;
+  letter-spacing: -.04em;
+  word-break: break-word;
+}
+
+h1 span {
+  display: block;
+}
+
+h1 .lime {
+  margin-top: .05em;
+  color: var(--lime);
+}
+
 .timer-container {
-  margin-top: clamp(24px, 3.5vw, 42px);
+  margin-top: clamp(14px, 2.5vw, 28px);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: clamp(18px, 2.5vw, 28px) clamp(24px, 3vw, 36px);
+  gap: 6px;
+  padding: 12px 18px;
   background: rgba(16, 20, 17, 0.78);
   border: 1px solid rgba(213, 255, 53, 0.3);
-  border-radius: 14px;
+  border-radius: 12px;
   width: fit-content;
+  max-width: 100%;
+  min-width: 0;
   backdrop-filter: blur(10px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(213, 255, 53, 0.04);
   transition: all 0.3s ease;
-  position: relative;
 }
 
 .timer-label {
-  font: 700 clamp(11px, 1.1vw, 14px) 'DM Mono', monospace;
-  letter-spacing: .25em;
+  font: 700 clamp(9px, 2.2vw, 12px) 'DM Mono', monospace;
+  letter-spacing: .2em;
   color: var(--lime);
   display: flex;
   align-items: center;
@@ -146,7 +204,7 @@ header, footer {
 }
 
 .timer-value {
-  font: 800 clamp(54px, 7vw, 100px) 'DM Mono', monospace;
+  font: 800 clamp(38px, 7.5vw, 80px) 'DM Mono', monospace;
   color: var(--lime);
   letter-spacing: -0.02em;
   line-height: 0.95;
@@ -169,77 +227,39 @@ header, footer {
   animation: blink 1.2s infinite ease-in-out;
 }
 
-main {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
-  flex: 1;
-  gap: 3vw;
-  padding: 30px 0;
-}
-
-.copy {
-  position: relative;
-  z-index: 2;
-  animation: enter 1s both;
-}
-
-.eyebrow {
-  margin: 0 0 20px;
-  color: var(--lime);
-  font: 11px 'DM Mono', monospace;
-  letter-spacing: .2em;
-}
-
-h1 {
-  margin: 0;
-  font: 900 clamp(80px, 13vw, 210px)/.75 'Barlow Condensed', Impact, sans-serif;
-  letter-spacing: -.055em;
-  animation: breathe 5s ease-in-out infinite;
-}
-
-h1 span {
-  display: block;
-  white-space: nowrap;
-}
-
-h1 .lime {
-  margin-top: .13em;
-  color: var(--lime);
-}
-
 .message {
-  margin-top: clamp(20px, 2.5vw, 32px);
-  padding-left: 17px;
+  margin-top: clamp(14px, 2vw, 22px);
+  padding-left: 12px;
   border-left: 3px solid var(--lime);
   color: var(--muted);
-  font-size: clamp(12px, 1.2vw, 15px);
-  line-height: 1.8;
-  letter-spacing: .12em;
+  font-size: clamp(11px, 1.2vw, 14px);
+  line-height: 1.6;
+  letter-spacing: .08em;
 }
 
 .message strong { color: var(--white); }
 
+/* HUD CAROUSEL - NO MIN-WIDTH RESTRICTION */
 .carousel-wrapper {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 820px;
-  padding: 14px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 12px;
   background: rgba(16, 20, 17, 0.5);
   border: 1px solid rgba(213, 255, 53, 0.15);
-  border-radius: 16px;
+  border-radius: 14px;
   backdrop-filter: blur(12px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(213, 255, 53, 0.03);
-  animation: enter 1.2s .2s both;
 }
 
 .carousel-wrapper::before,
 .carousel-wrapper::after {
   content: "";
   position: absolute;
-  width: 18px;
-  height: 18px;
+  width: 12px;
+  height: 12px;
   border: 2px solid var(--lime);
   pointer-events: none;
   z-index: 5;
@@ -249,28 +269,27 @@ h1 .lime {
   left: -1px;
   border-right: none;
   border-bottom: none;
-  border-top-left-radius: 16px;
-  box-shadow: -3px -3px 12px rgba(213, 255, 53, 0.4);
+  border-top-left-radius: 14px;
 }
 .carousel-wrapper::after {
   bottom: -1px;
   right: -1px;
   border-left: none;
   border-top: none;
-  border-bottom-right-radius: 16px;
-  box-shadow: 3px 3px 12px rgba(213, 255, 53, 0.4);
+  border-bottom-right-radius: 14px;
 }
 
 .hud-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 8px 12px;
+  padding: 2px 4px 8px;
   font: 9px 'DM Mono', monospace;
-  letter-spacing: .15em;
+  letter-spacing: .1em;
   color: var(--muted);
   border-bottom: 1px dashed rgba(213, 255, 53, 0.15);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  min-width: 0;
 }
 
 .hud-title {
@@ -278,23 +297,32 @@ h1 .lime {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
+}
+
+#recordCount {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
 }
 
 .carousel-container {
   position: relative;
   width: 100%;
+  min-width: 0;
   overflow: hidden;
   border-radius: 8px;
-  min-height: 340px;
+  min-height: 200px;
   display: flex;
   align-items: center;
-  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
 .carousel-track {
   display: flex;
-  gap: 20px;
+  gap: 12px;
   width: max-content;
   animation: continuousSlide 40s linear infinite;
   will-change: transform;
@@ -306,20 +334,13 @@ h1 .lime {
 
 .carousel-card {
   flex: 0 0 auto;
-  width: 240px;
-  height: 340px;
-  border-radius: 12px;
+  width: 180px;
+  height: 250px;
+  border-radius: 10px;
   overflow: hidden;
   position: relative;
   border: 1px solid rgba(213, 255, 53, 0.2);
   background: #151b15;
-  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.carousel-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  border-color: var(--lime);
-  box-shadow: 0 12px 28px rgba(213, 255, 53, 0.25), 0 0 15px rgba(213, 255, 53, 0.15);
 }
 
 .carousel-card img {
@@ -327,27 +348,19 @@ h1 .lime {
   height: 100%;
   object-fit: cover;
   display: block;
-  filter: saturate(1.1) contrast(1.05);
-  transition: transform 0.5s ease;
-}
-
-.carousel-card:hover img {
-  transform: scale(1.08);
 }
 
 .card-badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   z-index: 3;
-  padding: 4px 8px;
+  padding: 3px 6px;
   background: rgba(16, 20, 17, 0.85);
   border: 1px solid rgba(213, 255, 53, 0.4);
   border-radius: 4px;
   font: 8px 'DM Mono', monospace;
   color: var(--lime);
-  letter-spacing: .1em;
-  backdrop-filter: blur(4px);
 }
 
 .card-scanline {
@@ -360,23 +373,25 @@ h1 .lime {
   z-index: 2;
 }
 
-/* Slider Scrub Toolbar below pictures */
 .carousel-slider-bar {
-  margin-top: 14px;
-  padding-top: 10px;
+  margin-top: 10px;
+  padding-top: 8px;
   border-top: 1px dashed rgba(213, 255, 53, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
 }
 
 .slider-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font: 9px 'DM Mono', monospace;
-  letter-spacing: .12em;
+  font: 8.5px 'DM Mono', monospace;
+  letter-spacing: .08em;
   color: var(--muted);
+  min-width: 0;
 }
 
 .slider-indicator {
@@ -387,50 +402,30 @@ h1 .lime {
 .slider-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
 }
 
 .image-slider {
   flex: 1;
+  min-width: 0;
   -webkit-appearance: none;
   appearance: none;
-  height: 6px;
+  height: 5px;
   background: rgba(213, 255, 53, 0.15);
   border-radius: 3px;
   outline: none;
   border: 1px solid rgba(213, 255, 53, 0.25);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.image-slider:hover {
-  background: rgba(213, 255, 53, 0.25);
 }
 
 .image-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 4px;
   background: var(--lime);
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(213, 255, 53, 0.8);
-  border: 2px solid #101411;
-  transition: transform 0.15s ease;
-}
-
-.image-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-}
-
-.image-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  background: var(--lime);
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(213, 255, 53, 0.8);
   border: 2px solid #101411;
 }
 
@@ -438,46 +433,37 @@ h1 .lime {
   background: rgba(16, 20, 17, 0.9);
   border: 1px solid rgba(213, 255, 53, 0.35);
   color: var(--lime);
-  font: 700 9px 'DM Mono', monospace;
-  letter-spacing: .1em;
-  padding: 5px 10px;
+  font: 700 8.5px 'DM Mono', monospace;
+  padding: 5px 8px;
   border-radius: 4px;
   cursor: pointer;
-  white-space: nowrap;
-  backdrop-filter: blur(6px);
-  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.btn-slider-auto:hover {
-  background: var(--lime);
-  color: var(--bg);
+footer {
+  font: 8.5px 'DM Mono', monospace;
+  letter-spacing: .08em;
+  color: var(--muted);
+  padding-top: 12px;
+  flex-wrap: wrap;
 }
 
 .toolbar {
   position: fixed;
-  bottom: 16px;
-  right: 16px;
+  bottom: max(12px, env(safe-area-inset-bottom, 12px));
+  right: max(12px, env(safe-area-inset-right, 12px));
   z-index: 10;
-  display: flex;
-  gap: 10px;
 }
 
 .btn-hud {
-  background: rgba(16, 20, 17, 0.85);
+  background: rgba(16, 20, 17, 0.9);
   border: 1px solid rgba(213, 255, 53, 0.35);
   color: var(--lime);
-  font: 11px 'DM Mono', monospace;
-  letter-spacing: .1em;
-  padding: 6px 14px;
+  font: 10px 'DM Mono', monospace;
+  padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
   backdrop-filter: blur(6px);
-  transition: all 0.2s ease;
-}
-
-.btn-hud:hover {
-  background: var(--lime);
-  color: var(--bg);
 }
 
 @keyframes continuousSlide {
@@ -495,24 +481,51 @@ h1 .lime {
   50% { opacity: 0.4; }
 }
 
-@media (max-width: 900px) {
-  main { grid-template-columns: 1fr; gap: 30px; }
-  .carousel-wrapper { max-width: 100%; }
-  .carousel-card { width: 180px; height: 250px; }
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 860px) {
+  main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding: 14px 0 28px;
+  }
+  .carousel-wrapper {
+    max-width: 100%;
+  }
+  .carousel-card {
+    width: 150px;
+    height: 210px;
+  }
+  .carousel-container {
+    min-height: 220px;
+  }
 }
 
-@media (max-width: 750px) {
-  .screen { padding: 24px 20px; }
-  h1 { font-size: clamp(90px, 18vw, 150px); }
-  .eyebrow { margin-bottom: 20px; }
-  .message { margin-top: 20px; }
-  footer { font-size: 8px; }
-}
-
-@media (max-width: 400px) {
-  .brand-logo { height: 18px; }
-  .status { font-size: 8px; }
-  h1 { font-size: 22vw; }
+@media (max-width: 480px) {
+  .screen {
+    padding: 12px 12px 50px;
+  }
+  .status {
+    font-size: 7.5px;
+    letter-spacing: .03em;
+  }
+  h1 {
+    font-size: clamp(42px, 13vw, 64px);
+    line-height: 0.88;
+  }
+  .timer-container {
+    width: 100%;
+    padding: 10px 14px;
+  }
+  .timer-value {
+    font-size: clamp(34px, 11vw, 50px);
+  }
+  .carousel-card {
+    width: 120px;
+    height: 170px;
+  }
+  .carousel-container {
+    min-height: 180px;
+  }
 }
 </style>
 </head>
@@ -556,7 +569,6 @@ h1 .lime {
         <div class="carousel-track" id="carouselTrack"></div>
       </section>
 
-      <!-- Slider to scroll to a certain image -->
       <div class="carousel-slider-bar">
         <div class="slider-meta">
           <span>TARGET NAV // <span class="slider-indicator" id="sliderIndicator">FRAME 01</span></span>
@@ -578,7 +590,7 @@ h1 .lime {
 </div>
 
 <div class="toolbar">
-  <button id="fullscreen" class="btn-hud">⛶ Full Screen</button>
+  <button id="fullscreen" class="btn-hud" aria-label="Toggle Fullscreen">⛶ Fullscreen</button>
 </div>
 
 <script>
@@ -600,7 +612,7 @@ document.addEventListener('fullscreenchange', function () {
   document.body.classList.toggle('fullscreen', !!document.fullscreenElement);
 });
 
-// --- Break Timer ---
+// --- Break Timer (15 Minutes) ---
 const BREAK_DURATION_SECONDS = 15 * 60;
 const startTime = Date.now();
 
@@ -640,7 +652,7 @@ function updateTimer() {
 updateTimer();
 setInterval(updateTimer, 1000);
 
-// --- PERMANENT FOLDER SCANNER (1 to 100, supports .jpg, .jpeg, .png, .webp) ---
+// --- Image Scanner & Marquee ---
 const MAX_SEARCH_COUNT = 100;
 const EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp'];
 
@@ -671,9 +683,7 @@ async function loadPermanentFolderImages() {
     for (const ext of EXTENSIONS) {
       const path = `Images/${num}.${ext}`;
       const found = await checkImage(path);
-      if (found) {
-        return { num, path: found };
-      }
+      if (found) return { num, path: found };
     }
     return null;
   };
@@ -710,9 +720,7 @@ async function loadPermanentFolderImages() {
     return card;
   }
 
-  // Set 1
   validImages.forEach((src, idx) => track.appendChild(createCard(src, idx)));
-  // Set 2 (for continuous smooth marquee)
   validImages.forEach((src, idx) => track.appendChild(createCard(src, idx)));
 
   const totalCards = validImages.length * 2;
@@ -747,9 +755,10 @@ function startAutoSync() {
 function getCardStepDistance() {
   const firstCard = track.querySelector('.carousel-card');
   if (firstCard) {
-    return firstCard.offsetWidth + 20; // width + gap
+    const gap = parseFloat(window.getComputedStyle(track).gap) || 12;
+    return firstCard.offsetWidth + gap;
   }
-  return 260;
+  return 160;
 }
 
 function applySliderScroll(idx) {
@@ -774,7 +783,7 @@ resumeAutoBtn.addEventListener('click', function () {
   isManualScrub = false;
   track.style.transition = 'none';
   track.style.transform = 'none';
-  track.style.animation = ''; // restores continuousSlide
+  track.style.animation = '';
   scrollModeStatus.textContent = 'AUTO-FEED ACTIVE';
   scrollModeStatus.style.color = 'var(--muted)';
   startAutoSync();
