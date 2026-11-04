@@ -360,6 +360,99 @@ h1 .lime {
   z-index: 2;
 }
 
+/* Slider Scrub Toolbar below pictures */
+.carousel-slider-bar {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(213, 255, 53, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slider-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .12em;
+  color: var(--muted);
+}
+
+.slider-indicator {
+  color: var(--lime);
+  font-weight: 700;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.image-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: rgba(213, 255, 53, 0.15);
+  border-radius: 3px;
+  outline: none;
+  border: 1px solid rgba(213, 255, 53, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.image-slider:hover {
+  background: rgba(213, 255, 53, 0.25);
+}
+
+.image-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--lime);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(213, 255, 53, 0.8);
+  border: 2px solid #101411;
+  transition: transform 0.15s ease;
+}
+
+.image-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.image-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--lime);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(213, 255, 53, 0.8);
+  border: 2px solid #101411;
+}
+
+.btn-slider-auto {
+  background: rgba(16, 20, 17, 0.9);
+  border: 1px solid rgba(213, 255, 53, 0.35);
+  color: var(--lime);
+  font: 700 9px 'DM Mono', monospace;
+  letter-spacing: .1em;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+.btn-slider-auto:hover {
+  background: var(--lime);
+  color: var(--bg);
+}
+
 .toolbar {
   position: fixed;
   bottom: 16px;
@@ -463,6 +556,18 @@ h1 .lime {
       <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack"></div>
       </section>
+
+      <!-- Slider to scroll to a certain image -->
+      <div class="carousel-slider-bar">
+        <div class="slider-meta">
+          <span>TARGET NAV // <span class="slider-indicator" id="sliderIndicator">FRAME 01</span></span>
+          <span id="scrollModeStatus">AUTO-FEED ACTIVE</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" class="image-slider" id="imageSlider" min="0" max="0" value="0" step="1" title="Slide to browse images">
+          <button type="button" class="btn-slider-auto" id="resumeAutoBtn" title="Resume continuous auto-scroll">▶ RESUME</button>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -549,9 +654,18 @@ function checkImage(src) {
   });
 }
 
+const track = document.getElementById('carouselTrack');
+const slider = document.getElementById('imageSlider');
+const sliderIndicator = document.getElementById('sliderIndicator');
+const scrollModeStatus = document.getElementById('scrollModeStatus');
+const resumeAutoBtn = document.getElementById('resumeAutoBtn');
+
+let uniqueImagesCount = 0;
+let isManualScrub = false;
+let autoSyncInterval = null;
+
 async function loadPermanentFolderImages() {
   const recordCountEl = document.getElementById('recordCount');
-  const track = document.getElementById('carouselTrack');
   const validImages = [];
 
   const checkSlot = async (num) => {
@@ -575,10 +689,15 @@ async function loadPermanentFolderImages() {
 
   if (validImages.length === 0) {
     recordCountEl.textContent = 'SYS_LOG // 0 RECORDS (EMPTY FOLDER)';
+    slider.disabled = true;
     return;
   }
 
-  recordCountEl.textContent = `SYS_LOG // ${validImages.length} RECORDS`;
+  uniqueImagesCount = validImages.length;
+  recordCountEl.textContent = `SYS_LOG // ${uniqueImagesCount} RECORDS`;
+
+  slider.max = Math.max(0, uniqueImagesCount - 1);
+  slider.value = 0;
 
   function createCard(src, index) {
     const badgeNumber = String(index + 1).padStart(2, '0');
@@ -598,8 +717,69 @@ async function loadPermanentFolderImages() {
   validImages.forEach((src, idx) => track.appendChild(createCard(src, idx)));
 
   const totalCards = validImages.length * 2;
-  track.style.animationDuration = `${Math.max(25, totalCards * 1.5)}s`;
+  const animDuration = Math.max(25, totalCards * 1.5);
+  track.style.animationDuration = `${animDuration}s`;
+
+  startAutoSync();
 }
+
+function startAutoSync() {
+  if (autoSyncInterval) clearInterval(autoSyncInterval);
+  autoSyncInterval = setInterval(() => {
+    if (isManualScrub || uniqueImagesCount <= 1) return;
+    const computedMatrix = window.getComputedStyle(track).transform;
+    if (computedMatrix && computedMatrix !== 'none') {
+      const match = computedMatrix.match(/matrix.*\((.+)\)/);
+      if (match) {
+        const values = match[1].split(', ');
+        const currentX = Math.abs(parseFloat(values[4]));
+        const halfWidth = track.scrollWidth / 2;
+        if (halfWidth > 0) {
+          const ratio = (currentX % halfWidth) / halfWidth;
+          const currIdx = Math.min(uniqueImagesCount - 1, Math.floor(ratio * uniqueImagesCount));
+          slider.value = currIdx;
+          sliderIndicator.textContent = `FRAME ${String(currIdx + 1).padStart(2, '0')}`;
+        }
+      }
+    }
+  }, 350);
+}
+
+function getCardStepDistance() {
+  const firstCard = track.querySelector('.carousel-card');
+  if (firstCard) {
+    return firstCard.offsetWidth + 20; // width + gap
+  }
+  return 260;
+}
+
+function applySliderScroll(idx) {
+  isManualScrub = true;
+  track.style.animation = 'none';
+  track.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+  
+  const step = getCardStepDistance();
+  const offset = -(idx * step);
+  track.style.transform = `translateX(${offset}px)`;
+  
+  sliderIndicator.textContent = `FRAME ${String(idx + 1).padStart(2, '0')}`;
+  scrollModeStatus.textContent = 'MANUAL TARGET LOCKED';
+  scrollModeStatus.style.color = 'var(--lime)';
+}
+
+slider.addEventListener('input', function () {
+  applySliderScroll(parseInt(this.value, 10));
+});
+
+resumeAutoBtn.addEventListener('click', function () {
+  isManualScrub = false;
+  track.style.transition = 'none';
+  track.style.transform = 'none';
+  track.style.animation = ''; // restores continuousSlide
+  scrollModeStatus.textContent = 'AUTO-FEED ACTIVE';
+  scrollModeStatus.style.color = 'var(--muted)';
+  startAutoSync();
+});
 
 loadPermanentFolderImages();
 </script>
