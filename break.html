@@ -239,7 +239,7 @@ h1 .lime {
 
 .message strong { color: var(--white); }
 
-/* HUD CAROUSEL - NO MIN-WIDTH RESTRICTION */
+/* HUD CAROUSEL & MEDIA PLATFORM */
 .carousel-wrapper {
   position: relative;
   z-index: 2;
@@ -290,6 +290,8 @@ h1 .lime {
   border-bottom: 1px dashed rgba(213, 255, 53, 0.15);
   margin-bottom: 8px;
   min-width: 0;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .hud-title {
@@ -298,6 +300,29 @@ h1 .lime {
   align-items: center;
   gap: 6px;
   white-space: nowrap;
+}
+
+/* Media Selector Tabs */
+.media-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-tab {
+  background: rgba(20, 26, 21, 0.8);
+  border: 1px solid rgba(213, 255, 53, 0.2);
+  color: var(--muted);
+  font: 700 9px 'DM Mono', monospace;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-tab:hover, .btn-tab.active {
+  background: rgba(213, 255, 53, 0.15);
+  color: var(--lime);
+  border-color: var(--lime);
 }
 
 #recordCount {
@@ -440,6 +465,132 @@ h1 .lime {
   flex-shrink: 0;
 }
 
+/* VIDEO PLATFORM SECTION */
+.video-platform-container {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.video-screen-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #0b0e0c;
+  border: 1px solid rgba(213, 255, 53, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.video-screen-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.video-overlay-info {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font: 8px 'DM Mono', monospace;
+  background: rgba(16, 20, 17, 0.85);
+  border: 1px solid rgba(213, 255, 53, 0.4);
+  padding: 3px 6px;
+  border-radius: 4px;
+  color: var(--lime);
+  z-index: 4;
+}
+
+.video-scroll-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.video-list-header {
+  font: 8.5px 'DM Mono', monospace;
+  color: var(--muted);
+  letter-spacing: .08em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.video-scroll-list {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--lime) rgba(213, 255, 53, 0.1);
+}
+
+.video-scroll-list::-webkit-scrollbar {
+  height: 4px;
+}
+.video-scroll-list::-webkit-scrollbar-track {
+  background: rgba(213, 255, 53, 0.05);
+}
+.video-scroll-list::-webkit-scrollbar-thumb {
+  background: var(--lime);
+  border-radius: 2px;
+}
+
+.video-thumb-card {
+  flex: 0 0 auto;
+  width: 130px;
+  border: 1px solid rgba(213, 255, 53, 0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #141a15;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.video-thumb-card:hover, .video-thumb-card.active {
+  border-color: var(--lime);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(213, 255, 53, 0.25);
+}
+
+.video-thumb-card.active {
+  background: rgba(213, 255, 53, 0.12);
+}
+
+.video-thumb-preview {
+  width: 100%;
+  height: 75px;
+  background: #0a0d0b;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-thumb-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.video-thumb-badge {
+  padding: 4px 6px;
+  font: 8px 'DM Mono', monospace;
+  color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.video-thumb-badge .tag {
+  color: var(--lime);
+  font-weight: 700;
+}
+
 footer {
   font: 8.5px 'DM Mono', monospace;
   letter-spacing: .08em;
@@ -558,27 +709,56 @@ footer {
       </div>
     </section>
 
-    <!-- HUD MARQUEE CAROUSEL -->
+    <!-- HUD MARQUEE & VIDEO PLATFORM -->
     <div class="carousel-wrapper">
       <div class="hud-header">
         <span class="hud-title"><span class="dot" style="width:5px;height:5px"></span> LIVE OPERATOR FEED</span>
-        <span id="recordCount">SYS_LOG // SCANNING IMAGES...</span>
+        
+        <!-- Media Selector Buttons -->
+        <div class="media-tabs">
+          <button type="button" class="btn-tab active" id="btnModeImages">🖼 IMAGES</button>
+          <button type="button" class="btn-tab" id="btnModeVideos">▶ VIDEOS</button>
+        </div>
+
+        <span id="recordCount">SYS_LOG // SCANNING...</span>
       </div>
 
-      <section class="carousel-container">
-        <div class="carousel-track" id="carouselTrack"></div>
-      </section>
+      <!-- VIEW 1: IMAGES -->
+      <div id="imagePlatformSection">
+        <section class="carousel-container">
+          <div class="carousel-track" id="carouselTrack"></div>
+        </section>
 
-      <div class="carousel-slider-bar">
-        <div class="slider-meta">
-          <span>TARGET NAV // <span class="slider-indicator" id="sliderIndicator">FRAME 01</span></span>
-          <span id="scrollModeStatus">AUTO-FEED ACTIVE</span>
-        </div>
-        <div class="slider-row">
-          <input type="range" class="image-slider" id="imageSlider" min="0" max="0" value="0" step="1" title="Slide to browse images">
-          <button type="button" class="btn-slider-auto" id="resumeAutoBtn" title="Resume continuous auto-scroll">▶ RESUME</button>
+        <div class="carousel-slider-bar">
+          <div class="slider-meta">
+            <span>TARGET NAV // <span class="slider-indicator" id="sliderIndicator">FRAME 01</span></span>
+            <span id="scrollModeStatus">AUTO-FEED ACTIVE</span>
+          </div>
+          <div class="slider-row">
+            <input type="range" class="image-slider" id="imageSlider" min="0" max="0" value="0" step="1" title="Slide to browse images">
+            <button type="button" class="btn-slider-auto" id="resumeAutoBtn" title="Resume continuous auto-scroll">▶ RESUME</button>
+          </div>
         </div>
       </div>
+
+      <!-- VIEW 2: VIDEO PLATFORM -->
+      <div class="video-platform-container" id="videoPlatformSection">
+        <div class="video-screen-box">
+          <span class="video-overlay-info" id="currentVideoBadge">STREAM // FEED 01</span>
+          <video id="mainVideoPlayer" controls autoplay muted playsinline></video>
+        </div>
+        
+        <div class="video-scroll-list-wrapper">
+          <div class="video-list-header">
+            <span>SCROLL & SELECT OPERATOR TRANSMISSION</span>
+            <span id="videoPlaylistCount">0 ARCHIVED CLIPS</span>
+          </div>
+          <div class="video-scroll-list" id="videoScrollList">
+            <!-- Video thumbnail items injected dynamically -->
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -652,16 +832,63 @@ function updateTimer() {
 updateTimer();
 setInterval(updateTimer, 1000);
 
+// --- Media Mode Switcher (Images vs Videos) ---
+const btnModeImages = document.getElementById('btnModeImages');
+const btnModeVideos = document.getElementById('btnModeVideos');
+const imagePlatformSection = document.getElementById('imagePlatformSection');
+const videoPlatformSection = document.getElementById('videoPlatformSection');
+const recordCountEl = document.getElementById('recordCount');
+const mainVideoPlayer = document.getElementById('mainVideoPlayer');
+
+let currentMode = 'images';
+let imagesLoaded = false;
+let videosLoaded = false;
+
+btnModeImages.addEventListener('click', () => setMediaMode('images'));
+btnModeVideos.addEventListener('click', () => setMediaMode('videos'));
+
+function setMediaMode(mode) {
+  if (currentMode === mode) return;
+  currentMode = mode;
+  
+  if (mode === 'images') {
+    btnModeImages.classList.add('active');
+    btnModeVideos.classList.remove('active');
+    imagePlatformSection.style.display = 'block';
+    videoPlatformSection.style.display = 'none';
+    mainVideoPlayer.pause();
+    recordCountEl.textContent = `SYS_LOG // ${uniqueImagesCount} IMAGES`;
+  } else {
+    btnModeVideos.classList.add('active');
+    btnModeImages.classList.remove('active');
+    imagePlatformSection.style.display = 'none';
+    videoPlatformSection.style.display = 'flex';
+    recordCountEl.textContent = `SYS_LOG // ${validVideos.length} VIDEOS`;
+    if (!videosLoaded) {
+      loadPermanentFolderVideos();
+    }
+  }
+}
+
 // --- Image Scanner & Marquee ---
 const MAX_SEARCH_COUNT = 100;
-const EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp'];
+const IMAGE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp'];
+const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg', 'mov'];
 
-function checkImage(src) {
+function checkMedia(src, isVideo = false) {
   return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(src);
-    img.onerror = () => resolve(null);
-    img.src = src;
+    if (isVideo) {
+      const vid = document.createElement('video');
+      vid.preload = 'metadata';
+      vid.onloadedmetadata = () => resolve(src);
+      vid.onerror = () => resolve(null);
+      vid.src = src;
+    } else {
+      const img = new Image();
+      img.onload = () => resolve(src);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    }
   });
 }
 
@@ -676,13 +903,12 @@ let isManualScrub = false;
 let autoSyncInterval = null;
 
 async function loadPermanentFolderImages() {
-  const recordCountEl = document.getElementById('recordCount');
   const validImages = [];
 
   const checkSlot = async (num) => {
-    for (const ext of EXTENSIONS) {
+    for (const ext of IMAGE_EXTENSIONS) {
       const path = `Images/${num}.${ext}`;
-      const found = await checkImage(path);
+      const found = await checkMedia(path, false);
       if (found) return { num, path: found };
     }
     return null;
@@ -697,13 +923,13 @@ async function loadPermanentFolderImages() {
   results.filter(Boolean).sort((a, b) => a.num - b.num).forEach(item => validImages.push(item.path));
 
   if (validImages.length === 0) {
-    recordCountEl.textContent = 'SYS_LOG // 0 RECORDS (EMPTY FOLDER)';
+    if (currentMode === 'images') recordCountEl.textContent = 'SYS_LOG // 0 IMAGES';
     slider.disabled = true;
     return;
   }
 
   uniqueImagesCount = validImages.length;
-  recordCountEl.textContent = `SYS_LOG // ${uniqueImagesCount} RECORDS`;
+  if (currentMode === 'images') recordCountEl.textContent = `SYS_LOG // ${uniqueImagesCount} IMAGES`;
 
   slider.max = Math.max(0, uniqueImagesCount - 1);
   slider.value = 0;
@@ -727,13 +953,14 @@ async function loadPermanentFolderImages() {
   const animDuration = Math.max(25, totalCards * 1.5);
   track.style.animationDuration = `${animDuration}s`;
 
+  imagesLoaded = true;
   startAutoSync();
 }
 
 function startAutoSync() {
   if (autoSyncInterval) clearInterval(autoSyncInterval);
   autoSyncInterval = setInterval(() => {
-    if (isManualScrub || uniqueImagesCount <= 1) return;
+    if (isManualScrub || uniqueImagesCount <= 1 || currentMode !== 'images') return;
     const computedMatrix = window.getComputedStyle(track).transform;
     if (computedMatrix && computedMatrix !== 'none') {
       const match = computedMatrix.match(/matrix.*\((.+)\)/);
@@ -788,6 +1015,82 @@ resumeAutoBtn.addEventListener('click', function () {
   scrollModeStatus.style.color = 'var(--muted)';
   startAutoSync();
 });
+
+// --- Video Platform Scanner & Controller ---
+const validVideos = [];
+const videoScrollList = document.getElementById('videoScrollList');
+const currentVideoBadge = document.getElementById('currentVideoBadge');
+const videoPlaylistCount = document.getElementById('videoPlaylistCount');
+
+async function loadPermanentFolderVideos() {
+  recordCountEl.textContent = 'SYS_LOG // SCANNING VIDEOS...';
+  
+  const checkVideoSlot = async (num) => {
+    for (const ext of VIDEO_EXTENSIONS) {
+      const path = `Videos/${num}.${ext}`;
+      const found = await checkMedia(path, true);
+      if (found) return { num, path: found };
+    }
+    return null;
+  };
+
+  const tasks = [];
+  for (let i = 1; i <= MAX_SEARCH_COUNT; i++) {
+    tasks.push(checkVideoSlot(i));
+  }
+
+  const results = await Promise.all(tasks);
+  results.filter(Boolean).sort((a, b) => a.num - b.num).forEach(item => validVideos.push(item.path));
+
+  videosLoaded = true;
+  videoPlaylistCount.textContent = `${validVideos.length} ARCHIVED CLIPS`;
+  if (currentMode === 'videos') {
+    recordCountEl.textContent = `SYS_LOG // ${validVideos.length} VIDEOS`;
+  }
+
+  if (validVideos.length === 0) {
+    videoScrollList.innerHTML = `<span style="font:10px 'DM Mono';color:var(--muted);padding:10px;">NO CLIPS DETECTED IN Videos/ (1.mp4, 2.mp4...)</span>`;
+    return;
+  }
+
+  // Populate horizontal reel list
+  videoScrollList.innerHTML = '';
+  validVideos.forEach((src, idx) => {
+    const card = document.createElement('div');
+    card.className = `video-thumb-card ${idx === 0 ? 'active' : ''}`;
+    card.dataset.index = idx;
+    card.dataset.src = src;
+
+    const label = `CLIP ${String(idx + 1).padStart(2, '0')}`;
+    card.innerHTML = `
+      <div class="video-thumb-preview">
+        <video src="${src}#t=0.5" muted preload="metadata"></video>
+        <div class="card-scanline"></div>
+      </div>
+      <div class="video-thumb-badge">
+        <span class="tag">${label}</span>
+        <span>▶ SELECT</span>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.video-thumb-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      playVideo(src, idx);
+    });
+
+    videoScrollList.appendChild(card);
+  });
+
+  // Play initial clip
+  playVideo(validVideos[0], 0);
+}
+
+function playVideo(src, idx) {
+  mainVideoPlayer.src = src;
+  currentVideoBadge.textContent = `STREAM // FEED ${String(idx + 1).padStart(2, '0')}`;
+  mainVideoPlayer.play().catch(e => console.warn('Autoplay prevented. User interaction required.'));
+}
 
 loadPermanentFolderImages();
 </script>
